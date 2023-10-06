@@ -1,0 +1,7 @@
+[
+    "CREATE TABLE Users(id number not null primarykey autoincrement, first_name varchar not null, last_name varchar not null, email varchar not null, password varchar not null, role number not  null)",
+    "CREATE TABLE Book_Details(id not null primarykey autoincrement,book_id number not null, author_id number not null)",
+    "CREATE TABLE Books(id number not null primarykey autoincrement, name varchar not null, ISBN number not null, price number not null, row_no number not null, column_no number not null, availability number not null,FOREIGN KEY(id) REFERENCES Book_Details(book_id))",
+    "CREATE TABLE Transaction(id number not null primarykey, user_id number not null, book_id number not null, FOREIGN KEY(book_id) REFERENCES Books(id), status number not null, timestamp number not null)",
+    "CREATE TABLE Author(author_id number not null primarykey, name varchar not null)"
+]
