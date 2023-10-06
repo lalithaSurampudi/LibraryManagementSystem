@@ -1,0 +1,6 @@
+{
+    "/apis/message" : "/apis/message.js?needsToken=false&addsToken=sub:access&get=true",
+    "/apis/create" : "/apis/createUser.js?needsToken=false&addsToken=sub:access",
+    "/apis/add" : "/apis/addUser.js?needsToken=false&addsToken=sub:access",
+    "/apis/get" : "/apis/getUserData.js?needsToken=false&addsToken=sub:access&get=true"
+}
