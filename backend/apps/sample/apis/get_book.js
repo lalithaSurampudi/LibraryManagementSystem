@@ -18,7 +18,7 @@ exports.doService = async (jsonReq) => {
         return {
             result: true,
             success: true,
-            message: `NO book present in database `
+            message: `No book is present in database `
         };  
     }
 }

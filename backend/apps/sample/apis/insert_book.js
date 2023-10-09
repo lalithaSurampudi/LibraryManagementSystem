@@ -1,57 +1,51 @@
-const { json } = require("express");
-
 const API_CONSTANTS = require(`${CONSTANTS.APPROOTDIR}/sample/apis/lib/constants`);
 const driver = require(API_CONSTANTS.DRIVER_PATH);
 
 exports.doService = async (jsonReq) => {
-    if (!validateRequest(jsonReq)) return API_CONSTANTS.API_INSUFFICIENT_PARAMS;
+    if (!validateRequest(jsonReq)) return "Insufficient parameters";
 
     try {
         const check_book = await driver.getQuery(
             `SELECT ISBN from Books where ISBN=?`, [jsonReq.ISBN]
         )
-        // check weather book is present or not here book is not present we are going the insert the book.
         if (!check_book.length) {
-            const check_row = await sqldriver.getQuery(
-                `SELECT ISBN from Books where Row_no =${jsonReq.Row_no} and Shelf_no =${jsonReq.Shelf_no}`
+            const check_row = await driver.getQuery(
+                `SELECT ISBN from Books where row_no =${jsonReq.row_no} and column_no =${jsonReq.column_no}`
             )
-            console.log(check_row);
             if (!check_row.length) {
-                const insert = await sqldriver.runCmd(
-                    `INSERT into Books (Name,ISBN,Category,Edition,Shelf_no,Row_no,Count) VALUES(?,?,?,?,?,?,?)`,
+                const insert = await driver.runCmd(
+                    `INSERT into Books(name,ISBN,price, row_no, colum_no,availability) VALUES(?,?,?,?,?,?)`,
                     [
-                        jsonReq.Name,
+                        jsonReq.name,
                         jsonReq.ISBN,
-                        jsonReq.Category,
-                        jsonReq.Edition,
-                        jsonReq.Shelf_no,
-                        jsonReq.Row_no,
-                        jsonReq.Copies
+                        jsonReq.price,
+                        jsonReq.row_no,
+                        jsonReq.column_no,
+                        jsonReq.availability
                     ]
                 )
-                // book is inserted now insert the name of author in author table .
                 if (insert) {
-                    const check_author = await sqldriver.getQuery(
-                        `SELECT Name from Author where Name = ?`, [jsonReq.Author]
+                    const check_author = await driver.getQuery(
+                        `SELECT Name from Author where name = ?`, [jsonReq.Author]
                     )
-                    if (!check_author.length) { // here author is not present we add the author first.
-                        const insert_author = await sqldriver.runCmd(
-                            `INSERT into Author (Name) VALUES(?)`, [jsonReq.Author]
+                    if (!check_author.length) { 
+                        const insert_author = await driver.runCmd(
+                            `INSERT into Author (name) VALUES(?)`, [jsonReq.Author]
                         )
                         if (insert_author) {
-                            const author_id = await sqldriver.getQuery(
-                                `SELECT ID FROM Author where Name = ?`, [jsonReq.Author]
+                            const author_id = await driver.getQuery(
+                                `SELECT ID FROM Author where name = ?`, [jsonReq.Author]
                             )
-                            const book_id = await sqldriver.getQuery(
+                            const book_id = await driver.getQuery(
                                 `SELECT ID FROM Books where ISBN =?`, [jsonReq.ISBN]
                             )
                             console.log(author_id);
                             console.log(author_id[0].ID);
                             if (author_id.length && book_id.length) {
-                                const book_author = await sqldriver.runCmd(
-                                    `INSERT into Book_author(Book_id,Author_id) VALUES (?,?)`, [author_id[0].ID, book_id[0].ID]
+                                const book_details = await driver.runCmd(
+                                    `INSERT into Book_Details(book_id,author_id) VALUES (?,?)`, [author_id[0].ID, book_id[0].ID]
                                 )
-                                if (book_author) {
+                                if (book_details) {
                                     return {
                                         result: true,
                                         success: true,
@@ -76,19 +70,19 @@ exports.doService = async (jsonReq) => {
 
                         }
                     }
-                    else // auhtor is already present in table and we update the book_author table with this condition
+                    else
                     {
-                        const author_id = await sqldriver.getQuery(
-                            `SELECT ID FROM Author where Name = ?`, [jsonReq.Author]
+                        const author_id = await driver.getQuery(
+                            `SELECT ID FROM Author where name = ?`, [jsonReq.Author]
                         )
-                        const book_id = await sqldriver.getQuery(
+                        const book_id = await driver.getQuery(
                             `SELECT ID FROM Books where ISBN =?`, [jsonReq.ISBN]
                         )
                         console.log(author_id);
                         console.log(author_id[0].ID);
                         if (author_id.length && book_id.length) {
-                            const book_author = await sqldriver.runCmd(
-                                `INSERT into Book_author(Book_id,Author_id) VALUES (?,?)`, [author_id[0].ID, book_id[0].ID]
+                            const book_author = await driver.runCmd(
+                                `INSERT into Author(book_id,author_id) VALUES (?,?)`, [author_id[0].ID, book_id[0].ID]
                             )
                             if (book_author) {
                                 return {
@@ -115,15 +109,14 @@ exports.doService = async (jsonReq) => {
                     message: `place is already occupied`
                 };
             }
-        }
-        // book is present we simply increase the count.. 
+        } 
         else {
-            const count = await sqldriver.getQuery(
-                `SELECT Count from Books where ISBN=?`, [jsonReq.ISBN]
+            const count = await driver.getQuery(
+                `SELECT availability from Books where ISBN=?`, [jsonReq.ISBN]
             )
             if (count) {
-                const update_count = await sqldriver.runCmd(
-                    `UPDATE Books SET Count =${count[0].Count + jsonReq.Copies} WHERE ISBN =  ${jsonReq.ISBN} ;
+                const update_count = await driver.runCmd(
+                    `UPDATE Books SET availability =${count[0].availability + jsonReq.Copies} WHERE ISBN =  ${jsonReq.ISBN} ;
                 `
                 )
                 if (update_count) {
@@ -149,7 +142,7 @@ exports.doService = async (jsonReq) => {
             result: false,
             success: false,
             message: 'Api error',
-            error: API_CONSTANTS.API_RESPONSE_SERVER_ERROR,
+            error: "server error",
         };
     }
 

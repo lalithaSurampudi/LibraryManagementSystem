@@ -4,7 +4,7 @@ const driver = require(API_CONSTANTS.DRIVER_PATH);
 exports.doService = async (jsonReq) => {
     if (!validateRequest(jsonReq)) return API_CONSTANTS.API_INSUFFICIENT_PARAMS;
     const isbn = await driver.getQuery(
-        `SELECT Count from Books where ISBN =?`, [jsonReq.ISBN]
+        `SELECT availability from Books where ISBN =?`, [jsonReq.ISBN]
     )
     console.log(JSON.stringify(isbn))
     if (isbn.length == 0) {
@@ -15,20 +15,20 @@ exports.doService = async (jsonReq) => {
         };
     }
     else if (isbn[0].Count > 1) {
-        const count = await sqldriver.runCmd(
-            `UPDATE Books SET Count =${isbn[0].Count - 1} WHERE ISBN =  ${jsonReq.ISBN} ;`
+        const count = await driver.runCmd(
+            `UPDATE Books SET availability =${isbn[0].Count - 1} WHERE ISBN =  ${jsonReq.ISBN} ;`
         )
         if(count)
         {
             return {
                 result: true,
                 success: true,
-                message: `Deletion successful count decrese`
+                message: `Deletion successful`
             };   
         }
     }
     else {
-        const del = await sqldriver.runCmd(
+        const del = await driver.runCmd(
             `DELETE from Books where ISBN = ?`, [jsonReq.ISBN]
         )
         if (del) {
