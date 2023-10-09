@@ -2,5 +2,11 @@
     "/apis/message" : "/apis/message.js?needsToken=false&addsToken=sub:access&get=true",
     "/apis/create" : "/apis/createUser.js?needsToken=false&addsToken=sub:access",
     "/apis/add" : "/apis/addUser.js?needsToken=false&addsToken=sub:access",
-    "/apis/get" : "/apis/getUserData.js?needsToken=false&addsToken=sub:access&get=true"
+    "/apis/get" : "/apis/getUserData.js?needsToken=false&addsToken=sub:access&get=true",
+    "/apis/login":"/apis/login.js?needsToken=false&addsToken=sub:access",
+    "/apis/insert_book":"/apis/insert_book.js?needsToken=false&addsToken=sub:access",
+    "/apis/delete_book":"/apis/delete_book.js?needsToken=false&addsToken=sub:access",
+    "/apis/get_book":"/apis/get_book.js?needsToken=false&addsToken=sub:access",
+    "/apis/transactions":"/apis/transactions.js?needsToken=false&addsToken=sub:access"
+
 }
